@@ -1,0 +1,11 @@
+{
+  "name": "uvsonic",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev:backend": "set CGO_ENABLED=1 && go run ."
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
