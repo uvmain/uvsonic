@@ -2,9 +2,12 @@ package main
 
 import (
 	"github.com/uvmain/uvsonic/db"
+	"github.com/uvmain/uvsonic/logic"
 )
 
 func main() {
-	db.Init("uvsonic.db")
+	logic.LoadEnv()
+	db.Init()
+	logic.GetDirContents(logic.AudioFilesDirectory, []string{})
 	StartServer()
 }

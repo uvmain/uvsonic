@@ -3,15 +3,35 @@ package db
 import (
 	"database/sql"
 	"log"
+	"os"
+	"path/filepath"
 
+	"github.com/uvmain/uvsonic/logic"
 	_ "modernc.org/sqlite"
 )
 
 var DB *sql.DB
 
-func Init(path string) {
+func Init() {
+	logic.CreateDir(logic.DatabaseDirectory)
+
+	dbPath := filepath.Join(logic.DatabaseDirectory, "sqlite.db")
+	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
+		log.Println("Creating database file")
+
+		file, err := os.Create(dbPath)
+		if err != nil {
+			log.Printf("Error creating database file: %s", err)
+		} else {
+			log.Println("Database file created")
+		}
+		file.Close()
+	} else {
+		log.Println("Database already exists")
+	}
+
 	var err error
-	DB, err = sql.Open("sqlite", path)
+	DB, err = sql.Open("sqlite", dbPath)
 	if err != nil {
 		log.Fatal("DB init failed:", err)
 	}

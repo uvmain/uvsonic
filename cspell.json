@@ -10,11 +10,12 @@
   "language": "en-GB,en",
   "minWordLength": 4,
   "words": [
+    "alac",
     "iconify",
     "tsbuildinfo",
     "Unfonts",
     "unplugin",
-    "uvite",
+    "uvmain",
     "uvsonic",
     "vueuse",
     "webp"
