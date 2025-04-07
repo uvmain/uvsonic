@@ -1,16 +1,31 @@
 {
-  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
   "version": "0.2",
-  "dictionaries": [
-    "en-GB"
-  ],
   "ignorePaths": [
-    "node_modules"
+    "./frontend/dist/**",
+    "./frontend/node_modules/**"
   ],
+  "dictionaryDefinitions": [],
+  "dictionaries": [],
   "allowCompoundWords": true,
-  "ignoreWords": [],
+  "language": "en-GB,en",
+  "minWordLength": 4,
   "words": [
-    "uvmain",
-    "uvsonic"
-  ]
+    "iconify",
+    "tsbuildinfo",
+    "Unfonts",
+    "unplugin",
+    "uvite",
+    "uvsonic",
+    "vueuse",
+    "webp"
+  ],
+  "ignoreWords": [
+    "antfu",
+    "Attributify",
+    "modernc",
+    "stroustrup",
+    "godotenv",
+    "tabler"
+  ],
+  "import": []
 }

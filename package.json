@@ -2,10 +2,38 @@
   "name": "uvsonic",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
-    "dev:backend": "set CGO_ENABLED=1 && go run ."
-  },
-  "author": "",
+  "type": "module",
+  "author": "Ian Baron",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "postinstall": "cd backend && go mod download && cd ../ && npm run create-cert",
+    "clean": "rimraf -v -I backend/server backend/server.exe dist frontend/dist",
+    "clean:full": "rimraf -v -I backend/server backend/server.exe backend/data dist frontend/dist frontend/node_modules node_modules uvsonic.localhost.pem uvsonic.localhost-key.pem",
+    "dev:backend": "cd backend && cross-env LOCAL_DEV_ENV=true IMAGE_PATH=E:/photography ADMIN_USER=admin ADMIN_PASSWORD=password go run .",
+    "dev:frontend": "npm run dev --workspace frontend",
+    "dev": "concurrently npm:caddy npm:dev:backend npm:dev:frontend",
+    "build:backend": "cd backend && go build -o server . && cpy server . --rename=server.exe",
+    "build:frontend": "cd frontend && npm run build && cpy dist ../",
+    "build": "cross-env CGO_ENABLED=0 npm run build:frontend && npm run build:backend",
+    "preview": "concurrently npm:caddy:preview npm:preview:go",
+    "preview:go": "cd backend && cross-env LOCAL_DEV_ENV=true IMAGE_PATH=E:/photography ADMIN_USER=admin ADMIN_PASSWORD=password server.exe",
+    "create-cert": "mkcert uvsonic.localhost && mkcert --install",
+    "caddy": "caddy run --config Caddyfile",
+    "caddy:preview": "caddy run --config Caddyfile.preview",
+    "cspell": "cspell \"**/*.{go,ts,js,vue}\""
+  },
+  "devDependencies": {
+    "caddy-baron": "^2.0.1",
+    "concurrently": "^9.0.1",
+    "cpy-cli": "^5.0.0",
+    "cross-env": "^7.0.3",
+    "cspell": "^8.17.5",
+    "env-cmd": "^10.1.0",
+    "node-mkcert-binary": "^2.1.9",
+    "rimraf": "^6.0.1"
+  }
 }

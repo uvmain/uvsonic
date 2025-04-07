@@ -1,0 +1,11 @@
+services:
+  uvsonic:
+    image: uvsonic:latest
+    container_name: uvsonic
+    env_file:
+      - .env
+    volumes:
+      - /mnt/main/docker/uvsonic:/data
+      - /mnt/barra5/music:/audiofiles
+    ports:
+      - "3002:8080"

@@ -4,17 +4,25 @@ import (
 	"database/sql"
 	"log"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 var DB *sql.DB
 
 func Init(path string) {
 	var err error
-	DB, err = sql.Open("sqlite3", path)
+	DB, err = sql.Open("sqlite", path)
 	if err != nil {
 		log.Fatal("DB init failed:", err)
 	}
+
+	_, err = DB.Exec("pragma journal_mode = wal;")
+	if err != nil {
+		log.Printf("Error entering WAL mode: %s", err)
+	} else {
+		log.Println("Database is in WAL mode")
+	}
+
 	createTables()
 }
 

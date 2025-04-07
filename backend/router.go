@@ -39,8 +39,8 @@ func StartServer() {
 	// router.HandleFunc("GET /api/check-session", auth.CheckSessionHandler)
 
 	// public routes
-	router.HandleFunc("/albums", handlers.HandleAlbums)
-	router.HandleFunc("/songs", handlers.HandleSongs)
+	router.HandleFunc("/api/albums", handlers.HandleAlbums)
+	router.HandleFunc("/api/songs", handlers.HandleSongs)
 
 	// authenticated routes
 	// router.Handle("DELETE /api/slugs/{slug}", auth.AuthMiddleware(http.HandlerFunc(handleDeleteImageBySlug)))

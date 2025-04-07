@@ -1,0 +1,6 @@
+uvsonic.localhost {
+	tls uvsonic.localhost.pem uvsonic.localhost-key.pem
+	handle {
+		reverse_proxy localhost:8080
+	}
+}
