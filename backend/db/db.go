@@ -93,13 +93,14 @@ func InsertTrackMetadata(metadata types.TrackMetadata) error {
 		musicbrainz_track_id, filename, format, duration, size, bitrate, title, artist, album,
 		album_artist, genre, track_number, total_tracks, disc_number, total_discs, release_date,
 		musicbrainz_artist_id, musicbrainz_album_id, label 
-	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`)
+	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	 ON CONFLICT(musicbrainz_track_id) DO NOTHING;`)
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(
+	result, err := stmt.Exec(
 		metadata.MusicBrainzTrackID, metadata.Filename, metadata.Format, metadata.Duration, metadata.Size,
 		metadata.Bitrate, metadata.Title, metadata.Artist, metadata.Album,
 		metadata.AlbumArtist, metadata.Genre, metadata.TrackNumber,
@@ -107,11 +108,18 @@ func InsertTrackMetadata(metadata types.TrackMetadata) error {
 		metadata.ReleaseDate, metadata.MusicBrainzArtistID,
 		metadata.MusicBrainzAlbumID, metadata.Label,
 	)
+	rows, _ := result.RowsAffected()
+
 	if err != nil {
 		log.Printf("error inserting metadata row: %s", err)
 		return err
 	}
+	if rows == 0 {
+		log.Printf("Metadata row already exists for %s", metadata.Filename)
+	}
 
-	log.Printf("Metadata row inserted successfully for %s", metadata.Filename)
+	if rows > 0 {
+		log.Printf("Metadata row inserted successfully for %s", metadata.Filename)
+	}
 	return nil
 }
