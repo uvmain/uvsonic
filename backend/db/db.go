@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/uvmain/uvsonic/logic"
+	"github.com/uvmain/uvsonic/types"
 	_ "modernc.org/sqlite"
 )
 
@@ -47,28 +48,69 @@ func Init() {
 }
 
 func createTables() {
-	schema := `
-	CREATE TABLE IF NOT EXISTS artists (
-		id TEXT PRIMARY KEY,
-		name TEXT NOT NULL
-	);
-	CREATE TABLE IF NOT EXISTS albums (
-		id TEXT PRIMARY KEY,
-		name TEXT NOT NULL,
-		artist_id TEXT,
-		FOREIGN KEY (artist_id) REFERENCES artists(id)
-	);
-	CREATE TABLE IF NOT EXISTS songs (
-		id TEXT PRIMARY KEY,
-		title TEXT NOT NULL,
-		duration INTEGER NOT NULL,
-		artist_id TEXT,
-		album_id TEXT,
-		FOREIGN KEY (artist_id) REFERENCES artists(id),
-		FOREIGN KEY (album_id) REFERENCES albums(id)
-	);
-	`
-	if _, err := DB.Exec(schema); err != nil {
-		log.Fatal("Schema migration failed:", err)
+	err := CreateTrackMetadataTable()
+	if err != nil {
+		log.Fatal("Failed to create TrackMetadataTable:", err)
 	}
+}
+
+func CreateTrackMetadataTable() error {
+	query := `
+	CREATE TABLE IF NOT EXISTS track_metadata (
+		filename TEXT,
+		format TEXT,
+		duration TEXT,
+		size TEXT,
+		bitrate TEXT,
+		title TEXT,
+		artist TEXT,
+		album TEXT,
+		album_artist TEXT,
+		genre TEXT,
+		track_number TEXT,
+		total_tracks TEXT,
+		disc_number TEXT,
+		total_discs TEXT,
+		release_date TEXT,
+		musicbrainz_artist_id TEXT,
+		musicbrainz_album_id TEXT,
+		label TEXT
+	);`
+
+	_, err := DB.Exec(query)
+	if err != nil {
+		log.Printf("Error creating track_metadata table: %v", err)
+		return err
+	}
+
+	log.Println("track_metadata table created successfully (if it didn't already exist).")
+	return nil
+}
+
+func InsertTrackMetadata(metadata types.TrackMetadata) error {
+	stmt, err := DB.Prepare(`INSERT INTO track_metadata (
+		filename, format, duration, size, bitrate, title, artist, album, album_artist,
+		genre, track_number, total_tracks, disc_number, total_discs, release_date,
+		musicbrainz_artist_id, musicbrainz_album_id, label 
+	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(
+		metadata.Filename, metadata.Format, metadata.Duration, metadata.Size,
+		metadata.Bitrate, metadata.Title, metadata.Artist, metadata.Album,
+		metadata.AlbumArtist, metadata.Genre, metadata.TrackNumber,
+		metadata.TotalTracks, metadata.DiscNumber, metadata.TotalDiscs,
+		metadata.ReleaseDate, metadata.MusicBrainzArtistID,
+		metadata.MusicBrainzAlbumID, metadata.Label,
+	)
+	if err != nil {
+		log.Printf("error inserting metadata row: %s", err)
+		return err
+	}
+
+	log.Printf("Metadata row inserted successfully for %s", metadata.Filename)
+	return nil
 }

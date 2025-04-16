@@ -51,9 +51,9 @@ func GetTags(audfilePath string) (types.TrackMetadata, error) {
 		MusicBrainzArtistID: ffprobeOutput.Format.Tags["MUSICBRAINZ_ARTISTID"],
 		MusicBrainzAlbumID:  ffprobeOutput.Format.Tags["MUSICBRAINZ_ALBUMID"],
 		Label:               ffprobeOutput.Format.Tags["LABEL"],
+		TotalTracks:         ffprobeOutput.Format.Tags["TOTALTRACKS"],
+		TotalDiscs:          ffprobeOutput.Format.Tags["TOTALDISCS"],
 	}
-
-	log.Printf("Metadata read: %+v", metadata)
 
 	return metadata, nil
 }

@@ -12,7 +12,9 @@ type TrackMetadata struct {
 	AlbumArtist         string `json:"album_artist"`
 	Genre               string `json:"genre"`
 	TrackNumber         string `json:"track_number"`
+	TotalTracks         string `json:"total_tracks"`
 	DiscNumber          string `json:"disc_number"`
+	TotalDiscs          string `json:"total_discs"`
 	ReleaseDate         string `json:"release_date"`
 	MusicBrainzArtistID string `json:"musicbrainz_artist_id"`
 	MusicBrainzAlbumID  string `json:"musicbrainz_album_id"`
