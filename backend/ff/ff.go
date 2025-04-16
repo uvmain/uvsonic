@@ -1,6 +1,7 @@
 package ff
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"log"
 	"os/exec"
@@ -34,8 +35,14 @@ func GetTags(audfilePath string) (types.TrackMetadata, error) {
 		return types.TrackMetadata{}, err
 	}
 
+	var trackID = ffprobeOutput.Format.Tags["MUSICBRAINZ_TRACKID"]
+	if trackID == "" {
+		var filenameBytes = []byte(ffprobeOutput.Format.Filename)
+		trackID = base64.StdEncoding.EncodeToString(filenameBytes)
+	}
+
 	metadata := types.TrackMetadata{
-		MusicBrainzTrackID:  ffprobeOutput.Format.Tags["MUSICBRAINZ_TRACKID"],
+		MusicBrainzTrackID:  trackID,
 		Filename:            ffprobeOutput.Format.Filename,
 		Format:              ffprobeOutput.Format.FormatName,
 		Duration:            ffprobeOutput.Format.Duration,
