@@ -11,8 +11,12 @@
   "minWordLength": 4,
   "words": [
     "alac",
+    "albumid",
+    "artistid",
+    "Brainz",
     "ffprobe",
     "iconify",
+    "musicbrainz",
     "tsbuildinfo",
     "Unfonts",
     "unplugin",
