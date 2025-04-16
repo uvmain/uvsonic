@@ -11,6 +11,7 @@
   "minWordLength": 4,
   "words": [
     "alac",
+    "ffprobe",
     "iconify",
     "tsbuildinfo",
     "Unfonts",

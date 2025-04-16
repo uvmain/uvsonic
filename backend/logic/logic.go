@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"encoding/json"
 	"log"
 	"os"
 	"path/filepath"
@@ -35,7 +36,7 @@ func LoadEnv() {
 	audioFileTypesEnv := os.Getenv("AUDIO_FILE_TYPES")
 	if audioFileTypesEnv == "" {
 		AudioFileTypes = []string{
-			".aac", ".aiff", ".alac", ".flac", ".m4a", ".mp3", ".ogg", ".opus", ".wav",
+			".aac", ".alac", ".flac", ".m4a", ".mp3", ".ogg",
 		}
 	} else {
 		AudioFileTypes = strings.Split(audioFileTypesEnv, ",")
@@ -106,4 +107,13 @@ func GetDirContents(directoryPath string, fileTypes []string) ([]string, error) 
 	})
 	log.Printf("Found: %d files in %s", len(foundFiles), directoryPath)
 	return foundFiles, err
+}
+
+func PrintJsonObject(JsonObject interface{}) {
+	jsonData, err := json.MarshalIndent(JsonObject, "", "  ")
+	if err != nil {
+		log.Printf("Error marshalling JSON: %v\n", err)
+	} else {
+		log.Printf("JSON Data:\n%s\n", string(jsonData))
+	}
 }

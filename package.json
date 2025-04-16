@@ -13,18 +13,20 @@
     "postinstall": "cd backend && go mod download && cd ../ && npm run create-cert",
     "clean": "rimraf -v -I backend/server backend/server.exe dist frontend/dist",
     "clean:full": "rimraf -v -I backend/server backend/server.exe backend/data dist frontend/dist frontend/node_modules node_modules uvsonic.localhost.pem uvsonic.localhost-key.pem",
-    "dev:backend": "cd backend && cross-env LOCAL_DEV_ENV=true AUDIO_PATH=E:/music ADMIN_USER=admin ADMIN_PASSWORD=password go run .",
+    "dev:backend": "cd backend && cross-env LOCAL_DEV_ENV=true AUDIO_PATH=E:/music ADMIN_USER=admin ADMIN_PASSWORD=password FFMPEG_PATH=../node_modules/.bin/ffmpeg FFPROBE_PATH=../node_modules/.bin/ffprobe go run .",
     "dev:frontend": "npm run dev --workspace frontend",
     "dev": "concurrently npm:caddy npm:dev:backend npm:dev:frontend",
     "build:backend": "cd backend && go build -o server . && cpy server . --rename=server.exe",
     "build:frontend": "cd frontend && npm run build && cpy dist ../",
     "build": "cross-env CGO_ENABLED=0 npm run build:frontend && npm run build:backend",
     "preview": "concurrently npm:caddy:preview npm:preview:go",
-    "preview:go": "cd backend && cross-env LOCAL_DEV_ENV=true AUDIO_PATH=E:/music ADMIN_USER=admin ADMIN_PASSWORD=password server.exe",
+    "preview:go": "cd backend && cross-env LOCAL_DEV_ENV=true AUDIO_PATH=E:/music ADMIN_USER=admin ADMIN_PASSWORD=password FFMPEG_PATH=../node_modules/.bin/ffmpeg FFPROBE_PATH=../node_modules/.bin/ffprobe server.exe",
     "create-cert": "mkcert uvsonic.localhost && mkcert --install",
     "caddy": "caddy run --config Caddyfile",
     "caddy:preview": "caddy run --config Caddyfile.preview",
-    "cspell": "cspell \"**/*.{go,ts,js,vue}\""
+    "cspell": "cspell \"**/*.{go,ts,js,vue}\"",
+    "ffmpeg:version": "ffmpeg -version",
+    "ffprobe:version": "ffmpeg -version"
   },
   "devDependencies": {
     "caddy-baron": "^2.0.1",
@@ -33,6 +35,8 @@
     "cross-env": "^7.0.3",
     "cspell": "^8.17.5",
     "env-cmd": "^10.1.0",
+    "ffmpeg-baron": "^1.0.1",
+    "ffprobe-baron": "^1.0.0",
     "node-mkcert-binary": "^2.1.9",
     "rimraf": "^6.0.1"
   }
