@@ -35,6 +35,7 @@ func GetTags(audfilePath string) (types.TrackMetadata, error) {
 	}
 
 	metadata := types.TrackMetadata{
+		MusicBrainzTrackID:  ffprobeOutput.Format.Tags["MUSICBRAINZ_TRACKID"],
 		Filename:            ffprobeOutput.Format.Filename,
 		Format:              ffprobeOutput.Format.FormatName,
 		Duration:            ffprobeOutput.Format.Duration,

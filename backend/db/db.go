@@ -57,6 +57,7 @@ func createTables() {
 func CreateTrackMetadataTable() error {
 	query := `
 	CREATE TABLE IF NOT EXISTS track_metadata (
+		musicbrainz_track_id TEXT PRIMARY KEY,
 		filename TEXT,
 		format TEXT,
 		duration TEXT,
@@ -89,17 +90,17 @@ func CreateTrackMetadataTable() error {
 
 func InsertTrackMetadata(metadata types.TrackMetadata) error {
 	stmt, err := DB.Prepare(`INSERT INTO track_metadata (
-		filename, format, duration, size, bitrate, title, artist, album, album_artist,
-		genre, track_number, total_tracks, disc_number, total_discs, release_date,
+		musicbrainz_track_id, filename, format, duration, size, bitrate, title, artist, album,
+		album_artist, genre, track_number, total_tracks, disc_number, total_discs, release_date,
 		musicbrainz_artist_id, musicbrainz_album_id, label 
-	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`)
+	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`)
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
 	_, err = stmt.Exec(
-		metadata.Filename, metadata.Format, metadata.Duration, metadata.Size,
+		metadata.MusicBrainzTrackID, metadata.Filename, metadata.Format, metadata.Duration, metadata.Size,
 		metadata.Bitrate, metadata.Title, metadata.Artist, metadata.Album,
 		metadata.AlbumArtist, metadata.Genre, metadata.TrackNumber,
 		metadata.TotalTracks, metadata.DiscNumber, metadata.TotalDiscs,
