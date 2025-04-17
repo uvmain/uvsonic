@@ -48,13 +48,53 @@ func Init() {
 }
 
 func createTables() {
-	err := CreateTrackMetadataTable()
-	if err != nil {
-		log.Fatal("Failed to create TrackMetadataTable:", err)
-	}
+	CreateFileDataTable()
+	CreateTrackMetadataTable()
 }
 
-func CreateTrackMetadataTable() error {
+func doesTableExist(tableName string) bool {
+	query := `SELECT name FROM sqlite_master WHERE type='table' AND name=?;`
+	row := DB.QueryRow(query, tableName)
+
+	var name string
+	err := row.Scan(&name)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false
+		}
+		log.Fatal("Error checking if table exists:", err)
+	}
+
+	return name == tableName
+}
+
+func CreateFileDataTable() {
+	if doesTableExist("file_data") {
+		log.Println("file_data table already exists")
+		return
+	}
+
+	query := `
+	CREATE TABLE IF NOT EXISTS file_data (
+		file_path TEXT PRIMARY KEY,
+		date_created TEXT,
+		date_modified TEXT
+	);`
+
+	_, err := DB.Exec(query)
+	if err != nil {
+		log.Fatal("Error creating file_data table:", err)
+	}
+
+	log.Println("file_data table created successfully")
+}
+
+func CreateTrackMetadataTable() {
+	if doesTableExist("track_metadata") {
+		log.Println("track_metadata table already exists")
+		return
+	}
+
 	query := `
 	CREATE TABLE IF NOT EXISTS track_metadata (
 		musicbrainz_track_id TEXT PRIMARY KEY,
@@ -80,12 +120,10 @@ func CreateTrackMetadataTable() error {
 
 	_, err := DB.Exec(query)
 	if err != nil {
-		log.Printf("Error creating track_metadata table: %v", err)
-		return err
+		log.Fatal("Error creating track_metadata table:", err)
 	}
 
-	log.Println("track_metadata table created successfully (if it didn't already exist).")
-	return nil
+	log.Println("track_metadata table created successfully")
 }
 
 func InsertTrackMetadata(metadata types.TrackMetadata) error {
